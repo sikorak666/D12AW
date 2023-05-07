@@ -1,22 +1,53 @@
 #!/bin/bash
-# ---------------------------
-# This is a bash script for configuring Debian 12 (bookworm) for pro audio.
-# ---------------------------
-# NOTE: Execute this script by running the following command on your system:
-# wget -O ~/install-audio.sh https://raw.githubusercontent.com/brendaningram/linux-audio-setup-scripts/main/debian/11/install-audio-jack.sh && chmod +x ~/install-audio.sh && ~/install-audio.sh
+
+# wget -O ~/install-audio.sh https://github.com/deathroit/my-scripts/blob/main/install-audio.sh && chmod +x ~/install-audio.sh && ~/install-audio.sh
 
 
 
 
 # ---------------------------
-#  1 Update our system
+#  Update our system
 # ---------------------------
 
 sudo apt update && sudo apt dist-upgrade -y
 
+# ---------------------------
+#  Install tools
+# ---------------------------
+
+sudo apt install nala
+sudo nala update
+sudo nala fetch
+
+sudo nala install neofetch htop timeshift
+
 
 # ---------------------------
-# 2 Install Liquorix kernel
+#  Install browsers
+# ---------------------------
+
+# CHROMIUM
+sudo nala install chromium
+
+#BRAVE
+sudo apt install curl
+sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+sudo apt update
+sudo apt install brave-browser
+
+#MULLVAD
+
+cd ~/.local/share && wget https://mullvad.net/en/download/browser/linux64/latest -O mullvad-browser.tar.xz
+tar -xvf mullvad-browser.tar.xz mullvad-browser
+rm mullvad-browser.tar.xz && cd mullvad-browser
+./start-mullvad-browser.desktop --register-app
+
+#You can also run ./start-mullvad-browser.desktop --help to see more options.
+
+
+# ---------------------------
+# Install Liquorix kernel
 # https://liquorix.net/
 # ---------------------------
 
@@ -26,7 +57,7 @@ sudo apt install linux-image-liquorix-amd64 linux-headers-liquorix-amd64 -y
 
 
 # ---------------------------
-# 3 Install kxstudio and cadence
+# Install kxstudio and cadence
 # Cadence is a tool for managing audio connections to our hardware
 # NOTE: Select "YES" when asked to enable realtime privileges
 # ---------------------------
@@ -40,14 +71,14 @@ sudo apt install cadence -y
 
 
 # ---------------------------
-# 4 grub
+# grub
 # ---------------------------
 
 sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="quiet"/GRUB_CMDLINE_LINUX_DEFAULT="quiet threadirqs mitigations=off cpufreq.default_governor=performance"/g' /etc/default/grub
 sudo update-grub
 
 # ---------------------------
-# 5 limits
+# limits
 # See https://wiki.linuxaudio.org/wiki/system_configuration for more information.
 # ---------------------------
 
@@ -56,23 +87,23 @@ echo '@audio - rtprio 90
 
 
 # ---------------------------
-# 5 sysctl.conf
-# ---------------------------
+# sysctl.conf
 # See https://wiki.linuxaudio.org/wiki/system_configuration for more information.
+# ---------------------------
 
 echo 'vm.swappiness=10
 fs.inotify.max_user_watches=600000' | sudo tee -a /etc/sysctl.conf
 
 
 # ---------------------------
-# 6 Add the user to the audio group
+# Add the user to the audio group
 # ---------------------------
-notify "Add user to the audio group"
+
 sudo usermod -a -G audio $USER
 
 
 # ---------------------------
-# 7 REAPER
+# REAPER
 # Note: The instructions below will create a PORTABLE REAPER installation
 # at ~/REAPER.
 # ---------------------------
@@ -87,7 +118,7 @@ touch ~/REAPER/reaper.ini
 
 
 # ---------------------------
-# 8 Wine (staging)
+# Wine (staging)
 # This is required for yabridge
 # See https://wiki.winehq.org/Debian for additional information.
 # ---------------------------
@@ -100,9 +131,8 @@ sudo apt update
 sudo apt install --install-recommends winehq-staging -y
 
 # ---------------------------
-# 9 Winetricks
+# Winetricks
 # ---------------------------
-
 
 sudo apt install cabextract -y
 mkdir -p ~/.local/share
@@ -155,6 +185,9 @@ mkdir -p "$HOME/.wine/drive_c/Program Files/Common Files/VST3"
 yabridgectl add "$HOME/.wine/drive_c/Program Files/Steinberg/VstPlugins"
 yabridgectl add "$HOME/.wine/drive_c/Program Files/Common Files/VST2"
 yabridgectl add "$HOME/.wine/drive_c/Program Files/Common Files/VST3"
+
+
+
 
 # ---------------------------
 # Install Windows VST plugins
