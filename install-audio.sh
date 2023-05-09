@@ -2,31 +2,20 @@
 
 # wget -O ~/install-audio.sh https://github.com/deathroit/my-scripts/blob/main/install-audio.sh && chmod +x ~/install-audio.sh && ~/install-audio.sh
 
-
-
-
-# ---------------------------
-#  Update our system
-# ---------------------------
+#Update our system
 
 sudo apt update && sudo apt dist-upgrade -y
 
-# ---------------------------
-#  Install tools
-# ---------------------------
+#Install tools
 
 sudo apt install nala
 sudo nala update
 sudo nala fetch
-
 sudo nala install neofetch htop timeshift
 
+#Install browsers
 
-# ---------------------------
-#  Install browsers
-# ---------------------------
-
-# CHROMIUM
+#CHROMIUM
 sudo nala install chromium
 
 #BRAVE
@@ -45,22 +34,15 @@ rm mullvad-browser.tar.xz && cd mullvad-browser
 
 #You can also run ./start-mullvad-browser.desktop --help to see more options.
 
-
-# ---------------------------
-# Install Liquorix kernel
-# https://liquorix.net/
-# ---------------------------
+#Install Liquorix kernel
+#https://liquorix.net/
 
 sudo apt install curl -y
 curl 'https://liquorix.net/add-liquorix-repo.sh' | sudo bash
 sudo apt install linux-image-liquorix-amd64 linux-headers-liquorix-amd64 -y
 
-
-# ---------------------------
-# Install kxstudio and cadence
-# Cadence is a tool for managing audio connections to our hardware
-# NOTE: Select "YES" when asked to enable realtime privileges
-# ---------------------------
+#Install kxstudio and cadence
+#NOTE: "YES" when asked to enable realtime privileges
 
 sudo apt install apt-transport-https gpgv wget -y
 wget https://launchpad.net/~kxstudio-debian/+archive/kxstudio/+files/kxstudio-repos_11.1.0_all.deb
@@ -69,44 +51,31 @@ rm kxstudio-repos_11.1.0_all.deb
 sudo apt update
 sudo apt install cadence -y
 
-
-# ---------------------------
 # grub
-# ---------------------------
 
 sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="quiet"/GRUB_CMDLINE_LINUX_DEFAULT="quiet threadirqs mitigations=off cpufreq.default_governor=performance"/g' /etc/default/grub
 sudo update-grub
 
-# ---------------------------
 # limits
 # See https://wiki.linuxaudio.org/wiki/system_configuration for more information.
-# ---------------------------
 
 echo '@audio - rtprio 90
 @audio - memlock unlimited' | sudo tee -a /etc/security/limits.d/audio.conf
 
-
-# ---------------------------
 # sysctl.conf
 # See https://wiki.linuxaudio.org/wiki/system_configuration for more information.
-# ---------------------------
 
 echo 'vm.swappiness=10
 fs.inotify.max_user_watches=600000' | sudo tee -a /etc/sysctl.conf
 
-
-# ---------------------------
 # Add the user to the audio group
-# ---------------------------
 
 sudo usermod -a -G audio $USER
 
-
-# ---------------------------
 # REAPER
 # Note: The instructions below will create a PORTABLE REAPER installation
 # at ~/REAPER.
-# ---------------------------
+
 notify "REAPER"
 wget -O reaper.tar.xz http://reaper.fm/files/6.x/reaper679_linux_x86_64.tar.xz
 mkdir ./reaper
@@ -116,12 +85,8 @@ rm -rf ./reaper
 rm reaper.tar.xz
 touch ~/REAPER/reaper.ini
 
-
-# ---------------------------
 # Wine (staging)
-# This is required for yabridge
 # See https://wiki.winehq.org/Debian for additional information.
-# ---------------------------
 
 sudo dpkg --add-architecture i386
 sudo mkdir -pm755 /etc/apt/keyrings
@@ -130,9 +95,7 @@ sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/
 sudo apt update
 sudo apt install --install-recommends winehq-staging -y
 
-# ---------------------------
 # Winetricks
-# ---------------------------
 
 sudo apt install cabextract -y
 mkdir -p ~/.local/share
@@ -157,12 +120,8 @@ winetricks gdiplus
 # new wine prefixes (when installing plugins)
 cp -r ~/.wine ~/.wine-base
 
-
-# ---------------------------
 # Yabridge
 # can be found at: https://github.com/robbert-vdh/yabridge/blob/master/README.md
-# ---------------------------
-# NOTE: CHECK YABRIDGNE VERSION @ https://github.com/robbert-vdh/yabridge/releases
 
 wget -O yabridge.tar.gz https://github.com/robbert-vdh/yabridge/releases/download/5.0.5/yabridge-5.0.5.tar.gz
 mkdir -p ~/.local/share
@@ -186,28 +145,5 @@ yabridgectl add "$HOME/.wine/drive_c/Program Files/Steinberg/VstPlugins"
 yabridgectl add "$HOME/.wine/drive_c/Program Files/Common Files/VST2"
 yabridgectl add "$HOME/.wine/drive_c/Program Files/Common Files/VST3"
 
+yabridgectl sync
 
-
-
-# ---------------------------
-# Install Windows VST plugins
-# This is a manual step for you to run when you download plugins.
-# First, run the plugin installer .exe file
-# When the installer asks for a directory, make sure you select
-# one of the directories above.
-
-# VST2 plugins:
-#   C:\Program Files\Steinberg\VstPlugins
-# OR
-#   C:\Program Files\Common Files\VST2
-
-# VST3 plugins:
-#   C:\Program Files\Common Files\VST3
-# ---------------------------
-
-# Each time you install a new plugin, you need to run:
-# yabridgectl sync
-
-# ---------------------------
-# FINISHED!
-# Now just reboot, and make music!
