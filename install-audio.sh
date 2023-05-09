@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# wget -O ~/install-audio.sh https://github.com/deathroit/my-scripts/blob/main/install-audio.sh && chmod +x ~/install-audio.sh && ~/install-audio.sh
+# wget -O ~/install-audio.sh https://raw.githubusercontent.com/deathroit/my-scripts/main/install-audio.sh && chmod +x ~/install-audio.sh && ~/install-audio.sh
 
 #Update our system
 
